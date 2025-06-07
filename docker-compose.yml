@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  # Web Application Service
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: xerpa-labels-scanner-web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./app:/var/www/html/app
+      - ./public:/var/www/html/public
+      - ./writable:/var/www/html/writable
+    environment:
+      - CI_ENVIRONMENT=development
+    depends_on:
+      - database
+    networks:
+      - xerpa-network
+    restart: unless-stopped
+
+  # MySQL Database Service
+  database:
+    image: mysql:8.0
+    container_name: xerpa-labels-scanner-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: xerpa_labels
+      MYSQL_USER: xerpa_user
+      MYSQL_PASSWORD: xerpa_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - xerpa-network
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+
+  # phpMyAdmin (Optional - for database management)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: xerpa-labels-scanner-pma
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+    depends_on:
+      - database
+    networks:
+      - xerpa-network
+    restart: unless-stopped
+
+# Define named volumes
+volumes:
+  mysql_data:
+    driver: local
+
+# Define networks
+networks:
+  xerpa-network:
+    driver: bridge
+
