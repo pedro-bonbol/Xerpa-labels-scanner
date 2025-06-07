@@ -44,9 +44,6 @@ RUN chown -R www-data:www-data /var/www/html \
 # Install PHP dependencies
 RUN composer install --optimize-autoloader --no-dev
 
-# Copy environment file
-RUN cp env .env
-
 # Configure Apache to serve from public directory
 RUN echo '<VirtualHost *:80>\n\
     DocumentRoot /var/www/html/public\n\
