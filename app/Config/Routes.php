@@ -8,4 +8,5 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Home::index');
 $routes->get('/labels/capture', 'Etiquetas::index');
 $routes->get('/labels/review', 'Etiquetas::procesar');
+$routes->get('/labels/standar_label', 'StandarLabel::etiqueta_estandar');
 
