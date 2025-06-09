@@ -12,7 +12,7 @@
       'icono' => '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M5 3a2 2 0 00-2 2v3a2 2 0 002 2v9a2 2 0 002 2h10a2 2 0 002-2v-9a2 2 0 002-2V5a2 2 0 00-2-2H5zm0 2h14v3H5V5z"/></svg>'
     ],
     'export' => [
-      'titulo' => 'Generación y Exportación',
+      'titulo' => 'Exportación',
       'icono' => '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4a1 1 0 01.894.553l6 12A1 1 0 0118 18H6a1 1 0 01-.894-1.447l6-12A1 1 0 0112 4zm0 2.618L7.618 16h8.764L12 6.618z"/></svg>'
     ],
   ];

@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use chillerlan\QRCode\QRCode;
 
 
 
@@ -20,20 +21,21 @@ class StandarLabel extends BaseController
         ];
 
         $contenidoQr = implode("\n", [
-            "Producto: {$datosMock['producto']}",
-            "Origen: {$datosMock['origen']}",
-            "Peso: {$datosMock['peso']}",
-            "Lote: {$datosMock['lote']}",
-            "Congelación: {$datosMock['congelacion']}",
-            "Caducidad: {$datosMock['caducidad']}",
-            "Empresa: {$datosMock['empresa']}"
+            "Producto {$datosMock['producto']}",
+            "Origen {$datosMock['origen']}",
+            "Peso {$datosMock['peso']}",
+            "Lote {$datosMock['lote']}",
+            "Congelación {$datosMock['congelacion']}",
+            "Caducidad {$datosMock['caducidad']}",
+            "Empresa {$datosMock['empresa']}"
         ]);
 
-      
+        $qrCode = new QRCode();
+        $pngData = $qrCode->render($contenidoQr);
 
         return view('labels/standar_label', [
             'data' => $datosMock,
-            'qr'   => base_url('qr/temp.svg')
+            'qr' => $pngData
         ]);
     }
 }

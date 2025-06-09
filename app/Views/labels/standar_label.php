@@ -20,7 +20,7 @@
         <div class="subtitle"><?= $data['producto'] ?></div>
       </div>
       <div>
-        <img class="qr" src="<?= $qr ?>" alt="QR">
+        <img class="qr" width="150" src="<?= esc($qr) ?>" alt="QR">
       </div>
     </div>
 

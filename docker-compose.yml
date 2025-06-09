@@ -10,9 +10,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./app:/var/www/html/app
-      - ./public:/var/www/html/public
-      - ./writable:/var/www/html/writable
+       - ./:/var/www/html
     environment:
       - CI_ENVIRONMENT=development
     depends_on:
