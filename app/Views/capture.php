@@ -5,8 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Captura de etiquetas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="<?= base_url('css/tailwind.css') ?>">
-  <link rel="stylesheet" href="<?= base_url('resources/css/styles.css') ?>">
 
 </head>
 
@@ -31,28 +31,28 @@
       <input
         type="file"
         id="fileInputGaleria"
+        name="imagenes[]"
         accept="image/png, image/jpeg, image/gif"
         multiple
         hidden />
 
       <div id="cameraContainer" class="mt-4 hidden">
-        <video id="videoCamera" autoplay class="w-full  h-64 p-1 bg-black rounded"></video>
+        <video id="videoCamera" autoplay  class="w-full  h-64 p-1 bg-black rounded"></video>
         <div id="photoCapture" class="flex justify-center items-center mt-2 bg-red-500 border-4 p-6 border-black rounded-full text-white w-10 h-10 cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
             <path fill="white" d="M12 16.73q1.567 0 2.649-1.081T15.731 13t-1.082-2.649T12 9.269t-2.649 1.082T8.269 13t1.082 2.649T12 16.731m0-1q-1.165 0-1.948-.783T9.269 13t.783-1.948T12 10.269t1.948.783t.783 1.948t-.783 1.948t-1.948.783M4.616 20q-.691 0-1.153-.462T3 18.384V7.616q0-.691.463-1.153T4.615 6h2.958l1.85-2h5.154l1.85 2h2.958q.69 0 1.152.463T21 7.616v10.769q0 .69-.463 1.153T19.385 20zm0-1h14.769q.269 0 .442-.173t.173-.442V7.615q0-.269-.173-.442T19.385 7h-3.397l-1.844-2H9.856L8.012 7H4.615q-.269 0-.442.173T4 7.616v10.769q0 .269.173.442t.443.173M12 13" />
           </svg>
         </div>
-        <canvas id="canvasPhoto" class="hidden"></canvas>
       </div>
 
       <!-- Botones -->
       <div class="flex flex-col md:flex-row justify-center gap-4">
         <button
-          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          class="bg-blue-600 text-white px-4 py-2 rounded min-w-[175px] hover:bg-blue-700"
           onclick="document.getElementById('fileInputGaleria').click();">
           Seleccionar archivos
         </button>
-        <button id="openCamera" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+        <button id="openCamera" class="bg-green-600 text-white min-w-[175px] px-4 py-2 rounded hover:bg-green-700">
           Usar Cámara
         </button>
       </div>
@@ -63,17 +63,17 @@
     </div>
 
     <!-- Previsualización -->
-    <div id="preview" class="grid grid-cols-2 gap-4 mt-6"></div>
-
+    
     <div class="mt-8 text-right">
       <button
-        class="bg-blue-200 text-blue-800 px-4 py-2 rounded disabled:opacity-50"
-        id="next-btn"
-        disabled
-        onclick="procesarImagenes();">
-        Siguiente →
-      </button>
-    </div>
+      class="bg-blue-200 text-blue-800 px-4 py-2 rounded disabled:opacity-50"
+      id="next-btn"
+      disabled
+      onclick="processImages();">
+      Siguiente →
+    </button>
+  </div>
+  <div id="preview" class="grid grid-cols-2 gap-4 mt-6"></div>
   </section>
 
   <script>
@@ -104,10 +104,28 @@
     photoCapture.addEventListener('click', () => {
       canvasPhoto.width = videoCamera.videoWidth
       canvasPhoto.height = videoCamera.videoHeight
-      canvasPhoto.getContext('2d').drawImage(videoCamera, 0, 0)
+      const context = canvasPhoto.getContext('2d')
+      context.drawImage(videoCamera, 0, 0)
       canvasPhoto.classList.remove('hidden')
+
+      // Detener la cámara
       stream.getTracks().forEach(track => track.stop())
-      const dataUrl = canvasPhoto.toDataURL('image/png')
+
+      // Convertir a Blob y luego a File
+      canvasPhoto.toBlob((blob) => {
+        const file = new File([blob], `captura-${Date.now()}.png`, {
+          type: 'image/png'
+        })
+
+        if (files.length >= 5) {
+          alert('Máximo 5 imágenes en total.')
+          return
+        }
+
+        files.push(file)
+        showPreview(file)
+        nextBtn.disabled = false
+      }, 'image/png')
     })
 
     inputGaleria.addEventListener('change', manageFiles)
@@ -126,6 +144,7 @@
       })
 
       nextBtn.disabled = files.length === 0
+      cameraContainer.classList.add('hidden')
     }
 
     function showPreview(file) {
@@ -159,7 +178,7 @@
         .then(response => response.json())
         .then(data => {
           if (data.success) {
-            window.location.href = "<?= base_url('etiquetas/revision') ?>"
+            window.location.href = "<?= base_url('/review') ?>"
           } else {
             alert('Error procesando imágenes: ' + (data.error?.join(', ') || 'desconocido'))
           }

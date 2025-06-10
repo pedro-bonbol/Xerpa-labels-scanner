@@ -1,6 +1,18 @@
 <?php
-  // echo "<p>Ruta: $ruta — Paso actual: $indiceActual</p>";
-  $ruta = service('uri')->getSegment(2) ?? 'index';
+  // Obtener la ruta actual de forma segura
+  $uri = service('uri');
+  $ruta = $uri->getSegment(1) ?? '';
+  
+  // Mapear las rutas reales a los pasos del progreso
+  $mapeoRutas = [
+    '' => 'capture',           // Ruta raíz /
+    'index' => 'capture',      // Por si acaso
+    'review' => 'review',      // /review
+    'export' => 'export'       // /export
+  ];
+  
+  // Determinar el paso actual basado en la ruta
+  $pasoActual = $mapeoRutas[$ruta] ?? 'capture';
 
   $pasos = [
     'capture' => [
@@ -18,7 +30,10 @@
   ];
 
   $claves = array_keys($pasos);
-  $indiceActual = array_search($ruta, $claves);
+  $indiceActual = array_search($pasoActual, $claves);
+  
+  // Debug (puedes comentar esto en producción)
+  // echo "<p>Ruta: $ruta — Paso actual: $pasoActual — Índice: $indiceActual</p>";
 ?>
 
 <div class="flex items-center justify-center max-w-5xl mx-auto px-4 py-6">
@@ -40,6 +55,7 @@
       };
 
       $textClass = $estado === 'futuro' ? 'text-gray-500' : 'text-black';
+      
     ?>
 
     <div class="flex items-center w-full last:w-auto relative">
